@@ -41,13 +41,13 @@ def seed_db():
             description="Rocky, chunky and rutted out downhill with lots of flow",
             distance=765,
             climb=0,
-            descent=102,
+            descent=-102,
             user=users[0]
         ),
         Track(
             name="Wombat",
             duration=datetime.time(hour=0, minute=6, second=22),
-            description="Smooth flowy manicured berms to provide a roller coaster like experience",
+            description="Jump on the roller coaster express and send it down these manicured flowly berms. Hard packed dirt for ultimate smoothness",
             distance=1700,
             climb=5,
             descent=-91,
@@ -56,7 +56,7 @@ def seed_db():
         Track(
             name="Crusher",
             duration=datetime.time(hour=0, minute=9, second=24),
-            description="Beware the first feature, for thou shall crush",
+            description="Beware the first feature, for thou shall get CRUSHEDDDD",
             distance=1300,
             climb=11,
             descent=-114,
