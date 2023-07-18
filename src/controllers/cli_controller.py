@@ -2,6 +2,8 @@ from flask import Blueprint
 from init import db, bcrypt 
 from models.user import User
 from models.track import Track
+from models.comment import Comment
+from datetime import date
 import datetime
 
 
@@ -65,6 +67,35 @@ def seed_db():
     ]
 
     db.session.add_all(tracks)
+
+    comments = [
+        Comment(
+            content="Tree has fallen over track, near the start. Avoid until further notice.",
+            date=date.today(),
+            user=users[0],
+            track=tracks[0]
+        ),
+        Comment(
+            content="Unreal track, one of my favourites.",
+            date=date.today(),
+            user=users[1],
+            track=tracks[1]
+        ),
+        Comment(
+            content="Super chunky today, conditions are rough.",
+            date=date.today(),
+            user=users[1],
+            track=tracks[2]
+        ),
+        Comment(
+            content="Just sent this track today, absolutely bonkers!.",
+            date=date.today(),
+            user=users[1],
+            track=tracks[2]
+        ),
+    ]
+
+    db.session.add_all(comments)
 
     db.session.commit()
 
