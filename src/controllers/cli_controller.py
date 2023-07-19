@@ -23,6 +23,7 @@ def drop_all():
 def seed_db():
     users = [
         User(
+            name="Admin",
             email="admin@email.com",
             password=bcrypt.generate_password_hash('123456').decode('utf-8'),
             is_admin=True
@@ -30,6 +31,11 @@ def seed_db():
         User(
             name="User1",
             email="user1@email.com",
+            password=bcrypt.generate_password_hash('123456').decode('utf-8')
+        ),
+        User(
+            name="User2",
+            email="user2@email.com",
             password=bcrypt.generate_password_hash('123456').decode('utf-8')
         )
     ]
@@ -70,25 +76,25 @@ def seed_db():
 
     comments = [
         Comment(
-            content="Tree has fallen over track, near the start. Avoid until further notice.",
+            message="Tree has fallen over track, near the start. Avoid until further notice.",
             date=date.today(),
             user=users[0],
             track=tracks[0]
         ),
         Comment(
-            content="Unreal track, one of my favourites.",
+            message="Unreal track, one of my favourites.",
             date=date.today(),
             user=users[1],
             track=tracks[1]
         ),
         Comment(
-            content="Super chunky today, conditions are rough.",
+            message="Super chunky today, conditions are rough.",
             date=date.today(),
             user=users[1],
             track=tracks[2]
         ),
         Comment(
-            content="Just sent this track today, absolutely bonkers!.",
+            message="Just sent this track today, absolutely bonkers!",
             date=date.today(),
             user=users[1],
             track=tracks[2]

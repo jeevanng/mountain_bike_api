@@ -5,7 +5,7 @@ class Comment(db.Model):
     __tablename__ = 'comments'
 
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text)
+    message = db.Column(db.Text)
     date = db.Column(db.Date)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -19,7 +19,7 @@ class CommentSchema(ma.Schema):
     track = fields.Nested('TrackSchema', exclude=['comments'])
 
     class Meta:
-        fields = ('id', 'content', 'date', 'track', 'user')
+        fields = ('id', 'message', 'date', 'track', 'user')
         ordered = True
 
 comment_schema = CommentSchema()

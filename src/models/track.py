@@ -36,7 +36,7 @@ class TrackSchema(ma.Schema):
     descent = fields.Method('format_descent_metres')
 
     class Meta:
-        fields = ('id', 'name', 'duration', 'description', 'distance', 'climb', 'descent', 'user')
+        fields = ('id', 'name', 'duration', 'description', 'distance', 'climb', 'descent', 'user', 'comments')
         ordered = True
 
 track_schema = TrackSchema()
