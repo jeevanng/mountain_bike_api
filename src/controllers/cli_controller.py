@@ -2,6 +2,8 @@ from flask import Blueprint
 from init import db, bcrypt 
 from models.user import User
 from models.track import Track
+from models.comment import Comment
+from datetime import date
 import datetime
 
 
@@ -21,6 +23,7 @@ def drop_all():
 def seed_db():
     users = [
         User(
+            name="Admin",
             email="admin@email.com",
             password=bcrypt.generate_password_hash('123456').decode('utf-8'),
             is_admin=True
@@ -28,6 +31,11 @@ def seed_db():
         User(
             name="User1",
             email="user1@email.com",
+            password=bcrypt.generate_password_hash('123456').decode('utf-8')
+        ),
+        User(
+            name="User2",
+            email="user2@email.com",
             password=bcrypt.generate_password_hash('123456').decode('utf-8')
         )
     ]
@@ -65,6 +73,35 @@ def seed_db():
     ]
 
     db.session.add_all(tracks)
+
+    comments = [
+        Comment(
+            message="Tree has fallen over track, near the start. Avoid until further notice.",
+            date=date.today(),
+            user=users[0],
+            track=tracks[0]
+        ),
+        Comment(
+            message="Unreal track, one of my favourites.",
+            date=date.today(),
+            user=users[1],
+            track=tracks[1]
+        ),
+        Comment(
+            message="Super chunky today, conditions are rough.",
+            date=date.today(),
+            user=users[1],
+            track=tracks[2]
+        ),
+        Comment(
+            message="Just sent this track today, absolutely bonkers!",
+            date=date.today(),
+            user=users[1],
+            track=tracks[2]
+        ),
+    ]
+
+    db.session.add_all(comments)
 
     db.session.commit()
 
