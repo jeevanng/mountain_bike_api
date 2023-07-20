@@ -5,6 +5,7 @@ from models.user import User
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from controllers.comment_controller import comments_bp
 import functools
+from marshmallow import INCLUDE
 
 tracks_bp = Blueprint('tracks', __name__, url_prefix='/tracks')
 tracks_bp.register_blueprint(comments_bp, url_prefix='/<int:track_id>/comments')
@@ -41,7 +42,7 @@ def get_one_track(id):
 @jwt_required()
 @authorise_as_admin
 def create_track():
-    body_data = track_schema.load(request.get_json(), partial=True)
+    body_data = track_schema.load(request.get_json(), partial=True, unknown=INCLUDE)
     
     track = Track(
         name=body_data.get('name'),
@@ -50,6 +51,7 @@ def create_track():
         distance=body_data.get('distance'),
         climb=body_data.get('climb'),
         descent=body_data.get('descent'),
+        difficulty_id=body_data.get('difficulty_id'),
         user_id=get_jwt_identity()
     )
 
@@ -75,7 +77,7 @@ def delete_one_track(id):
 @jwt_required()
 @authorise_as_admin
 def update_one_track(id):
-    body_data = track_schema.load(request.get_json(), partial=True)
+    body_data = track_schema.load(request.get_json(), partial=True, unknown=INCLUDE)
     stmt = db.select(Track).filter_by(id=id)
     track = db.session.scalar(stmt)
     if track: 
@@ -85,6 +87,7 @@ def update_one_track(id):
         track.distance = body_data.get('distance') or track.distance
         track.climb = body_data.get('climb') or track.climb
         track.descent = body_data.get('descent') or track.descent
+        track.difficulty_id = body_data.get('difficulty_id') or track.difficulty_id
         db.session.commit()
         return track_schema.dump(track)
     else:
