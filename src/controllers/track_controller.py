@@ -77,7 +77,7 @@ def delete_one_track(id):
 @jwt_required()
 @authorise_as_admin
 def update_one_track(id):
-    body_data = track_schema.load(request.get_json(), partial=True)
+    body_data = track_schema.load(request.get_json(), partial=True, unknown=INCLUDE)
     stmt = db.select(Track).filter_by(id=id)
     track = db.session.scalar(stmt)
     if track: 
@@ -87,6 +87,7 @@ def update_one_track(id):
         track.distance = body_data.get('distance') or track.distance
         track.climb = body_data.get('climb') or track.climb
         track.descent = body_data.get('descent') or track.descent
+        track.difficulty_id = body_data.get('difficulty_id') or track.difficulty_id
         db.session.commit()
         return track_schema.dump(track)
     else:
