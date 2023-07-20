@@ -2,7 +2,6 @@ from init import db, ma
 from marshmallow import fields, Schema, post_dump, validates
 from marshmallow.validate import Length, And, Regexp
 from sqlalchemy import Time
-import re
 from marshmallow.exceptions import ValidationError
 
 class Track(db.Model):
@@ -17,13 +16,16 @@ class Track(db.Model):
     descent = db.Column(db.Integer, nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    difficulty_id = db.Column(db.Integer, db.ForeignKey('difficulties.id'), nullable=False)
 
     user = db.relationship('User', back_populates='tracks')
     comments = db.relationship('Comment', back_populates='track', cascade='all, delete')
+    difficulty = db.relationship('Difficulty', back_populates='tracks')
 
 class TrackSchema(ma.Schema):
     user = fields.Nested('UserSchema', only=['name', 'email'])
     comments = fields.List(fields.Nested('CommentSchema', exclude=['track']))
+    difficulty = fields.Nested('DifficultySchema', exclude=['tracks'])
 
     name = fields.String(required=True, validate=And(
         Length(min=2, error='Title must be at least 2 characters long'),
@@ -51,7 +53,7 @@ class TrackSchema(ma.Schema):
         return data
 
     class Meta:
-        fields = ('id', 'name', 'duration', 'description', 'distance', 'climb', 'descent', 'user', 'comments')
+        fields = ('id', 'name', 'duration', 'description', 'distance', 'climb', 'descent', 'difficulty', 'user', 'comments')
         ordered = True
 
 track_schema = TrackSchema()

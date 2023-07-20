@@ -3,6 +3,7 @@ from init import db, bcrypt
 from models.user import User
 from models.track import Track
 from models.comment import Comment
+from models.difficulty import Difficulty
 from datetime import date
 import datetime
 
@@ -42,6 +43,29 @@ def seed_db():
 
     db.session.add_all(users)
 
+    difficulties = [
+        Difficulty(
+            difficulty="Green"
+        ),
+        Difficulty(
+            difficulty="Blue"
+        ),
+        Difficulty(
+            difficulty="Red"
+        ),
+        Difficulty(
+            difficulty="Black"
+        ),
+        Difficulty(
+            difficulty="Double Black"
+        ),
+        Difficulty(
+            difficulty="Proline"
+        ),
+    ]
+
+    db.session.add_all(difficulties)
+
     tracks = [
         Track(
             name="Fall Line",
@@ -50,6 +74,7 @@ def seed_db():
             distance=765,
             climb=0,
             descent=-102,
+            difficulty=difficulties[0],
             user=users[0]
         ),
         Track(
@@ -59,6 +84,7 @@ def seed_db():
             distance=1700,
             climb=5,
             descent=-91,
+            difficulty=difficulties[1],
             user=users[0]
         ),
         Track(
@@ -68,6 +94,7 @@ def seed_db():
             distance=1300,
             climb=11,
             descent=-114,
+            difficulty=difficulties[2],
             user=users[0]
         ),
     ]
