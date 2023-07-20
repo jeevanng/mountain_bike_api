@@ -1,6 +1,9 @@
 from init import db, ma 
-from marshmallow import fields, Schema
+from marshmallow import fields, Schema, post_dump, validates
+from marshmallow.validate import Length, And, Regexp
 from sqlalchemy import Time
+import re
+from marshmallow.exceptions import ValidationError
 
 class Track(db.Model):
     __tablename__ = "tracks"
@@ -9,9 +12,9 @@ class Track(db.Model):
     name = db.Column(db.String(100), nullable=False)
     duration = db.Column(Time)
     description = db.Column(db.Text)
-    distance = db.Column(db.Integer)
-    climb = db.Column(db.Integer)
-    descent = db.Column(db.Integer)
+    distance = db.Column(db.Integer, nullable=False)
+    climb = db.Column(db.Integer, nullable=False)
+    descent = db.Column(db.Integer, nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
@@ -22,18 +25,30 @@ class TrackSchema(ma.Schema):
     user = fields.Nested('UserSchema', only=['name', 'email'])
     comments = fields.List(fields.Nested('CommentSchema', exclude=['track']))
 
-    def format_distance_metres(self, obj):
-        return f"{obj.distance}m"
+    name = fields.String(required=True, validate=And(
+        Length(min=2, error='Title must be at least 2 characters long'),
+        Regexp("^[a-zA-Z0-9'. ]+$", error="Only letters, fullstops, apostrophe's, spaces and numbers are allowed")
+    ))
+    description = fields.String(validate=Regexp("^[a-zA-Z0-9'. ]+$", error="Only letters, fullstops, apostrophe's, spaces and numbers are allowed"))
+    duration = fields.Time(format='%H:%M:%S')
+    distance = fields.Integer(required=True)
+    climb = fields.Integer(required=True)
+    descent = fields.Integer(required=True)
     
-    def format_climb_metres(self, obj):
-        return f"{obj.climb}m"
+    @post_dump
+    def format_distance_metres(self, data, **kwargs):
+        data['distance'] = f"{data['distance']}m"
+        return data
     
-    def format_descent_metres(self, obj):
-        return f"{obj.descent}m"
-
-    distance = fields.Method('format_distance_metres')
-    climb = fields.Method('format_climb_metres')
-    descent = fields.Method('format_descent_metres')
+    @post_dump
+    def format_climb_metres(self, data, **kwargs):
+        data['climb'] = f"{data['climb']}m"
+        return data
+    
+    @post_dump
+    def format_descent_metres(self, data, **kwargs):
+        data['descent'] = f"{data['descent']}m"
+        return data
 
     class Meta:
         fields = ('id', 'name', 'duration', 'description', 'distance', 'climb', 'descent', 'user', 'comments')

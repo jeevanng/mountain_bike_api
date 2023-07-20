@@ -26,7 +26,8 @@ def get_one_track(id):
 @tracks_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_track():
-    body_data = request.get_json()
+    body_data = track_schema.load(request.get_json())
+    
     track = Track(
         name=body_data.get('name'),
         duration=body_data.get('duration'),
