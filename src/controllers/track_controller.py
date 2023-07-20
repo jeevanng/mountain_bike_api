@@ -26,7 +26,11 @@ def get_one_track(id):
 @tracks_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_track():
-    body_data = track_schema.load(request.get_json())
+    is_admin = authorise_as_admin()
+    if not is_admin:
+        return {'error': 'Not authorised to add tracks.'}, 403
+    
+    body_data = track_schema.load(request.get_json(), partial=True)
     
     track = Track(
         name=body_data.get('name'),
@@ -46,6 +50,10 @@ def create_track():
 @tracks_bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
 def delete_one_track(id):
+    is_admin = authorise_as_admin()
+    if not is_admin:
+        return {'error': 'Not authorised to delete tracks.'}, 403
+    
     stmt = db.select(Track).filter_by(id=id)
     track = db.session.scalar(stmt)
     if track:
@@ -58,7 +66,11 @@ def delete_one_track(id):
 @tracks_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 def update_one_track(id):
-    body_data = request.get_json()
+    is_admin = authorise_as_admin()
+    if not is_admin:
+        return {'error': 'Not authorised to update/edit tracks.'}, 403
+    
+    body_data = track_schema.load(request.get_json(), partial=True)
     stmt = db.select(Track).filter_by(id=id)
     track = db.session.scalar(stmt)
     if track: 
@@ -72,4 +84,9 @@ def update_one_track(id):
         return track_schema.dump(track)
     else:
         return {'error': f'Track not found with id {id}'}, 404
-
+    
+def authorise_as_admin():
+    user_id = get_jwt_identity()
+    stmt = db.select(User).filter_by(id=user_id)
+    user = db.session.scalar(stmt)
+    return user.is_admin
