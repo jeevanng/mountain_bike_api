@@ -6,6 +6,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from controllers.comment_controller import comments_bp
 import functools
 from marshmallow import INCLUDE
+from psycopg2 import errorcodes
 
 tracks_bp = Blueprint('tracks', __name__, url_prefix='/tracks')
 tracks_bp.register_blueprint(comments_bp, url_prefix='/<int:track_id>/comments')
@@ -42,23 +43,27 @@ def get_one_track(id):
 @jwt_required()
 @authorise_as_admin
 def create_track():
-    body_data = track_schema.load(request.get_json(), partial=True, unknown=INCLUDE)
-    
-    track = Track(
-        name=body_data.get('name'),
-        duration=body_data.get('duration'),
-        description=body_data.get('description'),
-        distance=body_data.get('distance'),
-        climb=body_data.get('climb'),
-        descent=body_data.get('descent'),
-        difficulty_id=body_data.get('difficulty_id'),
-        user_id=get_jwt_identity()
-    )
+    try:
+        body_data = track_schema.load(request.get_json(), partial=True, unknown=INCLUDE)
+        
+        track = Track(
+            name=body_data.get('name'),
+            duration=body_data.get('duration'),
+            description=body_data.get('description'),
+            distance=body_data.get('distance'),
+            climb=body_data.get('climb'),
+            descent=body_data.get('descent'),
+            difficulty_id=body_data.get('difficulty_id'),
+            user_id=get_jwt_identity()
+        )
 
-    db.session.add(track)
-    db.session.commit()
+        db.session.add(track)
+        db.session.commit()
 
-    return track_schema.dump(track), 201
+        return track_schema.dump(track), 201
+    except Exception as err:
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {'error': f'The {err.orig.diag.column_name} attribute is required'}, 409
 
 @tracks_bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
