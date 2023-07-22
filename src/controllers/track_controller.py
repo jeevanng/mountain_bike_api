@@ -2,11 +2,13 @@ from flask import Blueprint, request
 from init import db
 from models.track import Track, track_schema, tracks_schema
 from models.user import User
+from models.difficulty import Difficulty
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from controllers.comment_controller import comments_bp
 import functools
-from marshmallow import INCLUDE
+from marshmallow import INCLUDE, ValidationError
 from psycopg2 import errorcodes
+from sqlalchemy.exc import IntegrityError
 
 tracks_bp = Blueprint('tracks', __name__, url_prefix='/tracks')
 tracks_bp.register_blueprint(comments_bp, url_prefix='/<int:track_id>/comments')
@@ -45,7 +47,24 @@ def get_one_track(id):
 def create_track():
     try:
         body_data = track_schema.load(request.get_json(), partial=True, unknown=INCLUDE)
+
+        difficulty_str = body_data.get('difficulty_name')
+
+        if difficulty_str:
+            retrieved_difficulty_object = db.select(Difficulty).filter_by(difficulty=difficulty_str)
+            retrieved_difficulty = db.session.scalar(retrieved_difficulty_object)
+        else:
+            return {'message': f'difficulty_name must be included.'}
+            
+
+        #     difficulty_list = Difficulty.query.all()
         
+        #     difficuly_string_message = ""
+        #     for difficulty in difficulty_list:
+        #         difficuly_string_message += difficulty
+
+        #     return {'message': difficulty_string_message}
+    
         track = Track(
             name=body_data.get('name'),
             duration=body_data.get('duration'),
@@ -53,7 +72,7 @@ def create_track():
             distance=body_data.get('distance'),
             climb=body_data.get('climb'),
             descent=body_data.get('descent'),
-            difficulty_id=body_data.get('difficulty_id'),
+            difficulty_id=retrieved_difficulty.id,
             user_id=get_jwt_identity()
         )
 
@@ -61,9 +80,13 @@ def create_track():
         db.session.commit()
 
         return track_schema.dump(track), 201
-    except Exception as err:
-        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
-            return {'error': f'The {err.orig.diag.column_name} attribute is required'}, 409
+    except ValidationError as err:
+        return {'error': err.messages}, 400
+    except IntegrityError as err:
+         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return { 'error': f'The {err.orig.diag.column_name} attribute is required' }, 409
+    except Exception as e:
+        return {'error': 'An error occurred while processing the request'}, 500
 
 @tracks_bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
