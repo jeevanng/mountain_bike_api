@@ -5,7 +5,7 @@ class Difficulty(db.Model):
     __tablename__= "difficulties"
 
     id = db.Column(db.Integer, primary_key=True)
-    difficulty = db.Column(db.String, nullable=False)
+    difficulty_name = db.Column(db.String, nullable=False, unique=True)
 
     tracks = db.relationship('Track', back_populates='difficulty')
 
@@ -13,7 +13,7 @@ class DifficultySchema(ma.Schema):
     tracks = fields.List(fields.Nested('TrackSchema', exclude=['difficulty']))
 
     class Meta:
-        fields = ('id', 'difficulty', 'tracks')
+        fields = ('id', 'difficulty_name', 'tracks')
         ordered = True
 
 difficulty_schema = DifficultySchema()

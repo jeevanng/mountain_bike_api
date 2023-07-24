@@ -51,17 +51,17 @@ def create_track():
         difficulty_str = body_data.get('difficulty_name')
 
         if difficulty_str:
-            retrieved_difficulty_object = db.session.scalar(db.select(Difficulty).filter_by(difficulty=difficulty_str))
+            retrieved_difficulty_object = db.session.scalar(db.select(Difficulty).filter_by(difficulty_name=difficulty_str))
             if not retrieved_difficulty_object: 
                 difficulty_list = db.session.scalars(db.select(Difficulty))
                 difficulty_names = difficulties_schema_exclude.dump(difficulty_list)
                 difficulty_array = []
                 for difficulty in difficulty_names:
-                    difficulty_array.append(difficulty['difficulty'])
+                    difficulty_array.append(difficulty['difficulty_name'])
                 if difficulty_str not in difficulty_array:
-                    return {'error': f'Not a valid difficulty. Must be one of the following; {difficulty_array}'}
+                    return {'error': f'Not a valid difficulty. Must be one of the following; {difficulty_array}'}, 409
         else:
-            return {'message': f'difficulty_name must be included.'}
+            return {'message': f'difficulty_name must be included.'}, 409
         
         track = Track(
             name=body_data.get('name'),
