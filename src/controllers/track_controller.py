@@ -2,7 +2,7 @@ from flask import Blueprint, request
 from init import db
 from models.track import Track, track_schema, tracks_schema
 from models.user import User
-from models.difficulty import Difficulty
+from models.difficulty import Difficulty, difficulties_schema_exclude
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from controllers.comment_controller import comments_bp
 import functools
@@ -51,18 +51,18 @@ def create_track():
         difficulty_str = body_data.get('difficulty_name')
 
         if difficulty_str:
-            retrieved_difficulty_object = db.session.scalar(db.select(Difficulty).filter_by(difficulty=difficulty_str))
+            retrieved_difficulty_object = db.session.scalar(db.select(Difficulty).filter_by(difficulty_name=difficulty_str))
+            if not retrieved_difficulty_object: 
+                difficulty_list = db.session.scalars(db.select(Difficulty))
+                difficulty_names = difficulties_schema_exclude.dump(difficulty_list)
+                difficulty_array = []
+                for difficulty in difficulty_names:
+                    difficulty_array.append(difficulty['difficulty_name'])
+                if difficulty_str not in difficulty_array:
+                    return {'error': f'Not a valid difficulty. Must be one of the following; {difficulty_array}'}, 409
         else:
-            return {'message': f'difficulty_name must be included.'}
-            
-        #     difficulty_list = Difficulty.query.all()
+            return {'message': f'difficulty_name must be included.'}, 409
         
-        #     difficuly_string_message = ""
-        #     for difficulty in difficulty_list:
-        #         difficuly_string_message += difficulty
-
-        #     return {'message': difficulty_string_message}
-    
         track = Track(
             name=body_data.get('name'),
             duration=body_data.get('duration'),
@@ -104,6 +104,7 @@ def update_one_track(id):
     body_data = track_schema.load(request.get_json(), partial=True, unknown=INCLUDE)
     stmt = db.select(Track).filter_by(id=id)
     track = db.session.scalar(stmt)
+
     if track: 
         track.name = body_data.get('name') or track.name
         track.duration = body_data.get('duration') or track.duration
@@ -111,15 +112,26 @@ def update_one_track(id):
         track.distance = body_data.get('distance') or track.distance
         track.climb = body_data.get('climb') or track.climb
         track.descent = body_data.get('descent') or track.descent
-        track.difficulty_id = body_data.get('difficulty_id') or track.difficulty_id
+        # CHECK TO SEE IF THIS WORKS, AS IN TWO ADMINS? WILL IT UPDATE WITH WHICH ADMIN PUT, PATCH
+        track.user_id=get_jwt_identity()
+
+        difficulty_str = body_data.get('difficulty_name')
+        if difficulty_str: 
+            retrieved_difficulty_object = db.session.scalar(db.select(Difficulty).filter_by(difficulty_name=difficulty_str))
+            # If statement to handle when retrieved_difficulty_object is None 
+            if retrieved_difficulty_object:
+                track.difficulty_id = retrieved_difficulty_object.id 
+            if not retrieved_difficulty_object: 
+                difficulty_list = db.session.scalars(db.select(Difficulty))
+                difficulty_names = difficulties_schema_exclude.dump(difficulty_list)
+                difficulty_array = []
+                for difficulty in difficulty_names:
+                    difficulty_array.append(difficulty['difficulty_name'])
+                if difficulty_str not in difficulty_array:
+                    return {'error': f'Not a valid difficulty. Must be one of the following; {difficulty_array}'}, 409
+        
         db.session.commit()
         return track_schema.dump(track)
     else:
         return {'error': f'Track not found with id {id}'}, 404
     
-# def authorise_as_admin():
-#     user_id = get_jwt_identity()
-#     stmt = db.select(User).filter_by(id=user_id)
-#     user = db.session.scalar(stmt)
-#     return user.is_admin
-

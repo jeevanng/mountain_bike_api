@@ -45,22 +45,22 @@ def seed_db():
 
     difficulties = [
         Difficulty(
-            difficulty="Green"
+            difficulty_name="Green"
         ),
         Difficulty(
-            difficulty="Blue"
+            difficulty_name="Blue"
         ),
         Difficulty(
-            difficulty="Red"
+            difficulty_name="Red"
         ),
         Difficulty(
-            difficulty="Black"
+            difficulty_name="Black"
         ),
         Difficulty(
-            difficulty="Double Black"
+            difficulty_name="Double Black"
         ),
         Difficulty(
-            difficulty="Proline"
+            difficulty_name="Proline"
         ),
     ]
 

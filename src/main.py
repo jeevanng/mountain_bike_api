@@ -4,6 +4,7 @@ import os
 from controllers.cli_controller import db_commands
 from controllers.auth_controller import auth_bp
 from controllers.track_controller import tracks_bp
+from controllers.difficulty_controller import difficulties_bp
 from marshmallow.exceptions import ValidationError
 
 def create_app():
@@ -34,5 +35,6 @@ def create_app():
     app.register_blueprint(db_commands)
     app.register_blueprint(auth_bp)
     app.register_blueprint(tracks_bp)
+    app.register_blueprint(difficulties_bp)
 
     return app
