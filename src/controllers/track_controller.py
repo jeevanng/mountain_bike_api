@@ -51,12 +51,10 @@ def create_track():
         difficulty_str = body_data.get('difficulty_name')
 
         if difficulty_str:
-            retrieved_difficulty_object = db.select(Difficulty).filter_by(difficulty=difficulty_str)
-            retrieved_difficulty = db.session.scalar(retrieved_difficulty_object)
+            retrieved_difficulty_object = db.session.scalar(db.select(Difficulty).filter_by(difficulty=difficulty_str))
         else:
             return {'message': f'difficulty_name must be included.'}
             
-
         #     difficulty_list = Difficulty.query.all()
         
         #     difficuly_string_message = ""
@@ -72,7 +70,7 @@ def create_track():
             distance=body_data.get('distance'),
             climb=body_data.get('climb'),
             descent=body_data.get('descent'),
-            difficulty_id=retrieved_difficulty.id,
+            difficulty_id=retrieved_difficulty_object.id,
             user_id=get_jwt_identity()
         )
 
@@ -80,14 +78,12 @@ def create_track():
         db.session.commit()
 
         return track_schema.dump(track), 201
-    except ValidationError as err:
-        return {'error': err.messages}, 400
+    # except ValidationError as err:
+    #     return {'error': err.messages}, 400
     except IntegrityError as err:
          if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
-            return { 'error': f'The {err.orig.diag.column_name} attribute is required' }, 409
-    except Exception as e:
-        return {'error': 'An error occurred while processing the request'}, 500
-
+            return {'error': f'The {err.orig.diag.column_name} attribute is required' }, 409
+    
 @tracks_bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
 @authorise_as_admin
