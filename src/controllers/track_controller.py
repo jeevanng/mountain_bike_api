@@ -2,7 +2,7 @@ from flask import Blueprint, request
 from init import db
 from models.track import Track, track_schema, tracks_schema
 from models.user import User
-from models.difficulty import Difficulty
+from models.difficulty import Difficulty, difficulties_schema_exclude
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from controllers.comment_controller import comments_bp
 import functools
@@ -52,17 +52,17 @@ def create_track():
 
         if difficulty_str:
             retrieved_difficulty_object = db.session.scalar(db.select(Difficulty).filter_by(difficulty=difficulty_str))
+            if not retrieved_difficulty_object: 
+                difficulty_list = db.session.scalars(db.select(Difficulty))
+                difficulty_names = difficulties_schema_exclude.dump(difficulty_list)
+                difficulty_array = []
+                for difficulty in difficulty_names:
+                    difficulty_array.append(difficulty['difficulty'])
+                if difficulty_str not in difficulty_array:
+                    return {'error': f'Not a valid difficulty. Must be one of the following; {difficulty_array}'}
         else:
             return {'message': f'difficulty_name must be included.'}
-            
-        #     difficulty_list = Difficulty.query.all()
         
-        #     difficuly_string_message = ""
-        #     for difficulty in difficulty_list:
-        #         difficuly_string_message += difficulty
-
-        #     return {'message': difficulty_string_message}
-    
         track = Track(
             name=body_data.get('name'),
             duration=body_data.get('duration'),
@@ -123,3 +123,9 @@ def update_one_track(id):
 #     user = db.session.scalar(stmt)
 #     return user.is_admin
 
+# difficulty_list = db.session.scalars(db.select(Difficulty))
+# difficulty_list_a = difficulties_schema_exclude.dump(difficulty_list)
+# print(difficulty_list_a)
+# difficulty_string_message = ""
+# for difficulty in difficulty_list_a:
+#     difficulty_string_message += difficulty['difficulty'] 

@@ -18,3 +18,4 @@ class DifficultySchema(ma.Schema):
 
 difficulty_schema = DifficultySchema()
 difficulties_schema = DifficultySchema(many=True)
+difficulties_schema_exclude = DifficultySchema(many=True, exclude=['tracks'])
