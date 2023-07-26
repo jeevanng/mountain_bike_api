@@ -17,5 +17,6 @@ class DifficultySchema(ma.Schema):
         ordered = True
 
 difficulty_schema = DifficultySchema()
+difficulty_schema_exclude = DifficultySchema(exclude=['tracks'])
 difficulties_schema = DifficultySchema(many=True)
 difficulties_schema_exclude = DifficultySchema(many=True, exclude=['tracks'])
