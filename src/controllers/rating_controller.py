@@ -58,4 +58,4 @@ def update_rating(id):
         db.session.commit()
         return rating_schema_exclude.dump(rating)
     else: 
-        return {'error': f'Difficulty with id {id} does not exist'}, 404
+        return {'error': f'Rating with id {id} does not exist'}, 404
