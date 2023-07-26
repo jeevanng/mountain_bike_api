@@ -17,5 +17,6 @@ class RatingSchema(ma.Schema):
         ordered = True
 
 rating_schema = RatingSchema()
+rating_schema_exclude = RatingSchema(exclude=['tracks'])
 ratings_schema = RatingSchema(many=True)
 ratings_schema_exclude = RatingSchema(many=True, exclude=['tracks'])
