@@ -3,6 +3,7 @@ from init import db
 from models.track import Track, track_schema, tracks_schema
 from models.user import User
 from models.difficulty import Difficulty, difficulties_schema_exclude
+from models.rating import Rating, ratings_schema_exclude
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from controllers.comment_controller import comments_bp
 import functools
@@ -49,6 +50,7 @@ def create_track():
         body_data = track_schema.load(request.get_json(), partial=True, unknown=INCLUDE)
 
         difficulty_str = body_data.get('difficulty_name')
+        rating_str = body_data.get('stars')
 
         if difficulty_str:
             retrieved_difficulty_object = db.session.scalar(db.select(Difficulty).filter_by(difficulty_name=difficulty_str))
@@ -63,6 +65,19 @@ def create_track():
         else:
             return {'message': f'difficulty_name must be included.'}, 409
         
+        if rating_str:
+            retrieved_rating_object = db.session.scalar(db.select(Rating).filter_by(stars=rating_str))
+            if not retrieved_rating_object:
+                rating_list = db.session.scalars(db.select(Rating))
+                rating_names = ratings_schema_exclude.dump(rating_list)
+                rating_array = []
+                for rating in rating_names:
+                    rating_array.append(rating['stars'])
+                if rating_str not in rating_array:
+                    return {'error': f'Not a valid rating. Must be one of the following; {rating_array}'}, 409
+        else:
+            return {'message': f'stars column must be included.'}, 409
+        
         track = Track(
             name=body_data.get('name'),
             duration=body_data.get('duration'),
@@ -71,6 +86,7 @@ def create_track():
             climb=body_data.get('climb'),
             descent=body_data.get('descent'),
             difficulty_id=retrieved_difficulty_object.id,
+            rating_id=retrieved_rating_object.id,
             user_id=get_jwt_identity()
         )
 
@@ -129,6 +145,20 @@ def update_one_track(id):
                     difficulty_array.append(difficulty['difficulty_name'])
                 if difficulty_str not in difficulty_array:
                     return {'error': f'Not a valid difficulty. Must be one of the following; {difficulty_array}'}, 409
+        
+        rating_str = body_data.get('stars')
+        if rating_str:
+            retrieved_rating_object = db.session.scalar(db.select(Rating).filter_by(stars=rating_str))
+            if retrieved_rating_object:
+                track.rating_id = retrieved_rating_object.id
+            if not retrieved_rating_object:
+                rating_list = db.session.scalars(db.select(Rating))
+                rating_names = ratings_schema_exclude.dump(rating_list)
+                rating_array = []
+                for rating in rating_names:
+                    rating_array.append(rating['stars'])
+                if rating_str not in rating_array:
+                    return {'error': f'Not a valid rating. Must be one of the following; {rating_array}'}, 409
         
         db.session.commit()
         return track_schema.dump(track)
