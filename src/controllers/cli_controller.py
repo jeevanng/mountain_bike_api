@@ -4,6 +4,7 @@ from models.user import User
 from models.track import Track
 from models.comment import Comment
 from models.difficulty import Difficulty
+from models.rating import Rating
 from datetime import date
 import datetime
 
@@ -43,6 +44,26 @@ def seed_db():
 
     db.session.add_all(users)
 
+    ratings = [
+        Rating(
+            stars=1
+        ),
+        Rating(
+            stars=2
+        ),
+        Rating(
+            stars=3
+        ),
+        Rating(
+            stars=4
+        ),
+        Rating(
+            stars=5
+        ),
+    ]
+
+    db.session.add_all(ratings)
+
     difficulties = [
         Difficulty(
             difficulty_name="Green"
@@ -75,6 +96,7 @@ def seed_db():
             climb=0,
             descent=-102,
             difficulty=difficulties[0],
+            rating=ratings[1],
             user=users[0]
         ),
         Track(
@@ -85,6 +107,7 @@ def seed_db():
             climb=5,
             descent=-91,
             difficulty=difficulties[1],
+            rating=ratings[3],
             user=users[0]
         ),
         Track(
@@ -95,6 +118,7 @@ def seed_db():
             climb=11,
             descent=-114,
             difficulty=difficulties[2],
+            rating=ratings[4],
             user=users[0]
         ),
     ]
