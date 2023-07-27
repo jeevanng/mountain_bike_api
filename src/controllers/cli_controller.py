@@ -31,6 +31,12 @@ def seed_db():
             is_admin=True
         ),
         User(
+            name="Admin2",
+            email="admin2@email.com",
+            password=bcrypt.generate_password_hash('123456').decode('utf-8'),
+            is_admin=True
+        ),
+        User(
             name="User1",
             email="user1@email.com",
             password=bcrypt.generate_password_hash('123456').decode('utf-8')
@@ -65,7 +71,7 @@ def seed_db():
     db.session.add_all(ratings)
 
     difficulties = [
-        Difficulty(
+         Difficulty(
             difficulty_name="Green"
         ),
         Difficulty(

@@ -30,7 +30,7 @@ def get_track_via_difficulty(id):
 @authorise_as_admin
 def create_difficulty():
     try: 
-        body_data = request.get_json()
+        body_data = difficulty_schema.load(request.get_json())
 
         difficulties = Difficulty(
             difficulty_name = body_data.get('difficulty_name')
@@ -38,7 +38,7 @@ def create_difficulty():
         
         db.session.add(difficulties)
         db.session.commit()
-        return difficulty_schema.dump(difficulties), 201
+        return difficulty_schema_exclude.dump(difficulties), 201
     
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
@@ -50,20 +50,26 @@ def create_difficulty():
 @jwt_required()
 @authorise_as_admin
 def delete_difficulty(id):
-    stmt = db.select(Difficulty).filter_by(id=id)
-    difficulty = db.session.scalar(stmt)
-    if difficulty:
-        db.session.delete(difficulty)
-        db.session.commit()
-        return {'message': f'Difficulty {difficulty.difficulty_name} was deleted successfully'}
-    else: 
-        return {'error': f'Track not found with id {id}'}, 404
+    try:
+        stmt = db.select(Difficulty).filter_by(id=id)
+        difficulty = db.session.scalar(stmt)
+        if difficulty:
+            db.session.delete(difficulty)
+            db.session.commit()
+            return {'message': f'Difficulty {difficulty.difficulty_name} was deleted successfully'}
+        else: 
+            return {'error': f'Difficulty not found with id {id}'}, 404
+    except IntegrityError as err:
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            db.session.rollback()
+            return {'error': 'Unable to delete',
+                    'message': f'Track/s have the difficulty name {difficulty.difficulty_name} (id of {id}) that you are trying to delete. Please edit the track/s with those difficulties before deleting'}, 409
 
 @difficulties_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 @authorise_as_admin
 def update_difficulty(id):
-    body_data = request.get_json()
+    body_data = difficulty_schema.load(request.get_json())
     stmt = db.select(Difficulty).filter_by(id=id)
     difficulty = db.session.scalar(stmt)
     if difficulty:

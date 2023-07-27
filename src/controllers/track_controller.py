@@ -159,7 +159,7 @@ def update_one_track(id):
                     rating_array.append(rating['stars'])
                 if rating_str not in rating_array:
                     return {'error': f'Not a valid rating. Must be one of the following; {rating_array}'}, 409
-        
+            
         db.session.commit()
         return track_schema.dump(track)
     else:

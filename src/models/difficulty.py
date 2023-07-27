@@ -1,5 +1,6 @@
 from init import db, ma 
 from marshmallow import fields
+from marshmallow.validate import Length, And, Regexp
 
 class Difficulty(db.Model):
     __tablename__= "difficulties"
@@ -11,7 +12,10 @@ class Difficulty(db.Model):
 
 class DifficultySchema(ma.Schema):
     tracks = fields.List(fields.Nested('TrackSchema', exclude=['difficulty']))
-
+    difficulty_name = fields.String(required=True, validate=And(
+        Length(min=2, error='Difficulty name must be at least 2 characters long'),
+        Regexp("^[a-zA-Z0-9'. ]+$", error="Only letters, fullstops, apostrophe's, spaces and numbers are allowed")))
+    
     class Meta:
         fields = ('id', 'difficulty_name', 'tracks')
         ordered = True
