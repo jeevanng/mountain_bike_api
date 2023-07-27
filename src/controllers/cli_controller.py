@@ -5,6 +5,8 @@ from models.track import Track
 from models.comment import Comment
 from models.difficulty import Difficulty
 from models.rating import Rating
+from models.country import Country
+from models.region import Region
 from datetime import date
 import datetime
 
@@ -49,6 +51,55 @@ def seed_db():
     ]
 
     db.session.add_all(users)
+
+    countries = [
+        Country(
+            country="Australia"
+        ),
+        Country(
+            country="New Zealand"
+        ),
+        Country(
+            country="Peru"
+        ),
+        Country(
+            country="Canada"
+        ),
+        Country(
+            country="Italy"
+        ),
+    ]
+
+    db.session.add_all(countries)
+
+    regions = [
+        Region(
+            region="Victoria",
+            country=countries[0]
+        ),
+        Region(
+            region="Tasmania",
+            country=countries[0]
+        ),
+        Region(
+            region="Cusco",
+            country=countries[2]
+        ),
+        Region(
+            region="British Columbia",
+            country=countries[3]
+        ),
+        Region(
+            region="Ontario",
+            country=countries[3]
+        ),
+        Region(
+            region="Alberta",
+            country=countries[3]
+        ),
+    ]
+
+    db.session.add_all(regions)
 
     ratings = [
         Rating(
