@@ -7,6 +7,8 @@ class Location(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     location = db.Column(db.String, nullable=False, unique=True)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
 
     region_id = db.Column(db.Integer, db.ForeignKey('regions.id'), nullable=False)
 
@@ -14,13 +16,15 @@ class Location(db.Model):
 
 class LocationSchema(ma.Schema):
 
-     location = fields.String(required=True, validate=And(
+    location = fields.String(required=True, validate=And(
         Length(min=2, error='Location must be at least 2 characters long'),
         Regexp("^[a-zA-Z ]+$", error="Only letters and spaces are allowed")))
+    latitude = fields.Float(required=True)
+    longitude = fields.Float(required=True)
      
-     class Meta:
-          fields = ('id', 'location', 'region')
-          ordered = True
+    class Meta:
+        fields = ('id', 'location', 'region')
+        ordered = True
 
 location_schema = LocationSchema()
 locations_schema = LocationSchema(many=True)
