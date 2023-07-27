@@ -15,6 +15,7 @@ class Location(db.Model):
     region = db.relationship('Region', back_populates='locations')
 
 class LocationSchema(ma.Schema):
+    region = fields.Nested('RegionSchema', exclude=['locations'])
 
     location = fields.String(required=True, validate=And(
         Length(min=2, error='Location must be at least 2 characters long'),
@@ -23,7 +24,7 @@ class LocationSchema(ma.Schema):
     longitude = fields.Float(required=True)
      
     class Meta:
-        fields = ('id', 'location', 'region')
+        fields = ('id', 'location', 'latitude', 'longitude', 'region')
         ordered = True
 
 location_schema = LocationSchema()

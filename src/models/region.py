@@ -14,13 +14,14 @@ class Region(db.Model):
     locations = db.relationship('Location', back_populates='region', cascade='all, delete')
 
 class RegionSchema(ma.Schema):
-    
+    country = fields.Nested('CountrySchema', exclude=['regions'])
+    locations = fields.List(fields.Nested('LocationSchema', exclude=['region']))
     region = fields.String(required=True, validate=And(
         Length(min=2, error='Region must be at least 2 characters long'),
         Regexp("^[a-zA-Z ]+$", error="Only letters and spaces are allowed")))
 
     class Meta:
-        fields = ('id', 'region', 'country')
+        fields = ('id', 'region', 'country', 'locations')
         ordered = True
 
 region_schema = RegionSchema()

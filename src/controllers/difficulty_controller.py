@@ -19,9 +19,9 @@ def get_all_difficulties():
 @jwt_required()
 def get_track_via_difficulty(id):
     stmt = db.select(Difficulty).filter_by(id=id)
-    difficulty = db.session.scalars(stmt)
+    difficulty = db.session.scalar(stmt)
     if difficulty:
-        return difficulties_schema.dump(difficulty)
+        return difficulty_schema.dump(difficulty)
     else:
         return {'error': f'Difficulty not found with id {id}'}, 404
     
