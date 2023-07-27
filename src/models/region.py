@@ -18,7 +18,7 @@ class RegionSchema(ma.Schema):
     locations = fields.List(fields.Nested('LocationSchema', exclude=['region']))
     region = fields.String(required=True, validate=And(
         Length(min=2, error='Region must be at least 2 characters long'),
-        Regexp("^[a-zA-Z ]+$", error="Only letters and spaces are allowed")))
+        Regexp("^[a-zA-Z-]+$", error="Only letters and - are allowed. Please use - instead of space")))
 
     class Meta:
         fields = ('id', 'region', 'country', 'locations')

@@ -58,7 +58,7 @@ def seed_db():
             country="Australia"
         ),
         Country(
-            country="New Zealand"
+            country="New-Zealand"
         ),
         Country(
             country="Peru"
@@ -87,7 +87,7 @@ def seed_db():
             country=countries[2]
         ),
         Region(
-            region="British Columbia",
+            region="British-Columbia",
             country=countries[3]
         ),
         Region(
@@ -114,7 +114,7 @@ def seed_db():
             region=regions[0]
         ),
         Location(
-            location="Plenty Gorge",
+            location="Plenty-Gorge",
             latitude=-37.020100,
             longitude=144.964600,
             region=regions[0]
@@ -132,7 +132,7 @@ def seed_db():
             region=regions[1]
         ),
         Location(
-            location="Turkey Point",
+            location="Turkey-Point",
             latitude=42.680986,
             longitude=-80.332176,
             region=regions[4]
