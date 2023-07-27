@@ -13,7 +13,7 @@ class Country(db.Model):
 class CountrySchema(ma.Schema):
     
     country = fields.String(required=True, validate=And(
-        Length(min=2, error='Difficulty name must be at least 2 characters long'),
+        Length(min=2, error='Country must be at least 2 characters long'),
         Regexp("^[a-zA-Z ]+$", error="Only letters and spaces are allowed")))
 
     class Meta:

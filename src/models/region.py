@@ -11,11 +11,12 @@ class Region(db.Model):
     country_id = db.Column(db.Integer, db.ForeignKey('countries.id'), nullable=False)
 
     country = db.relationship('Country', back_populates='regions')
+    locations = db.relationship('Location', back_populates='region', cascade='all, delete')
 
 class RegionSchema(ma.Schema):
     
     region = fields.String(required=True, validate=And(
-        Length(min=2, error='Difficulty name must be at least 2 characters long'),
+        Length(min=2, error='Region must be at least 2 characters long'),
         Regexp("^[a-zA-Z ]+$", error="Only letters and spaces are allowed")))
 
     class Meta:

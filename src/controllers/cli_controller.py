@@ -7,6 +7,7 @@ from models.difficulty import Difficulty
 from models.rating import Rating
 from models.country import Country
 from models.region import Region
+from models.location import Location
 from datetime import date
 import datetime
 
@@ -96,6 +97,33 @@ def seed_db():
         Region(
             region="Alberta",
             country=countries[3]
+        ),
+    ]
+
+    locations = [
+        Location(
+            location="Lysterfield",
+            region=regions[0]
+        ),
+        Location(
+            location="Bright",
+            region=regions[0]
+        ),
+        Location(
+            location="Plenty Gorge",
+            region=regions[0]
+        ),
+        Location(
+            location="Whistler",
+            region=regions[3]
+        ),
+        Location(
+            location="Maydena",
+            region=regions[1]
+        ),
+        Location(
+            location="Turkey Point",
+            region=regions[4]
         ),
     ]
 
