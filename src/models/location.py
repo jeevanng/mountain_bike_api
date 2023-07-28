@@ -6,7 +6,7 @@ class Location(db.Model):
     __tablename__ = "locations"
 
     id = db.Column(db.Integer, primary_key=True)
-    location = db.Column(db.String, nullable=False, unique=True)
+    location_name = db.Column(db.String, nullable=False, unique=True)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
 
@@ -19,15 +19,16 @@ class LocationSchema(ma.Schema):
     region = fields.Nested('RegionSchema', exclude=['locations'])
     tracks = fields.List(fields.Nested('TrackSchema', exclude=['location']))
 
-    location = fields.String(required=True, validate=And(
+    location_name = fields.String(required=True, validate=And(
         Length(min=2, error='Location must be at least 2 characters long'),
         Regexp("^[a-zA-Z ]+$", error="Only letters and spaces are allowed")))
     latitude = fields.Float(required=True)
     longitude = fields.Float(required=True)
      
     class Meta:
-        fields = ('id', 'location', 'latitude', 'longitude', 'region', 'tracks')
+        fields = ('id', 'location_name', 'latitude', 'longitude', 'region', 'tracks')
         ordered = True
 
 location_schema = LocationSchema()
 locations_schema = LocationSchema(many=True)
+locations_schema_exclude = LocationSchema(many=True, exclude=['tracks'])

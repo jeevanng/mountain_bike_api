@@ -104,37 +104,37 @@ def seed_db():
 
     locations = [
         Location(
-            location="Lysterfield",
+            location_name="Lysterfield",
             latitude=-37.933109,
             longitude=145.303299,
             region=regions[0]
         ),
         Location(
-            location="Bright",
+            location_name="Bright",
             latitude=-36.730194,
             longitude=146.960896,
             region=regions[0]
         ),
         Location(
-            location="Plenty-Gorge",
+            location_name="Plenty-Gorge",
             latitude=-37.020100,
             longitude=144.964600,
             region=regions[0]
         ),
         Location(
-            location="Whistler",
+            location_name="Whistler",
             latitude=50.116322,
             longitude=-122.957359,
             region=regions[3]
         ),
         Location(
-            location="Maydena",
+            location_name="Maydena",
             latitude=-42.75584,
             longitude=146.62636,
             region=regions[1]
         ),
         Location(
-            location="Turkey-Point",
+            location_name="Turkey-Point",
             latitude=42.680986,
             longitude=-80.332176,
             region=regions[4]
