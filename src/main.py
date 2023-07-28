@@ -6,6 +6,7 @@ from controllers.auth_controller import auth_bp
 from controllers.track_controller import tracks_bp
 from controllers.difficulty_controller import difficulties_bp
 from controllers.rating_controller import ratings_bp
+from controllers.country_controller import countries_bp
 from marshmallow.exceptions import ValidationError
 
 def create_app():
@@ -38,5 +39,6 @@ def create_app():
     app.register_blueprint(tracks_bp)
     app.register_blueprint(difficulties_bp)
     app.register_blueprint(ratings_bp)
+    app.register_blueprint(countries_bp)
 
     return app

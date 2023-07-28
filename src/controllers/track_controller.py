@@ -4,6 +4,7 @@ from models.track import Track, track_schema, tracks_schema
 from models.user import User
 from models.difficulty import Difficulty, difficulties_schema_exclude
 from models.rating import Rating, ratings_schema_exclude
+from models.location  import Location, locations_schema_exclude
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from controllers.comment_controller import comments_bp
 import functools
@@ -51,6 +52,7 @@ def create_track():
 
         difficulty_str = body_data.get('difficulty_name')
         rating_str = body_data.get('stars')
+        location_str = body_data.get('location_name')
 
         if difficulty_str:
             retrieved_difficulty_object = db.session.scalar(db.select(Difficulty).filter_by(difficulty_name=difficulty_str))
@@ -78,6 +80,20 @@ def create_track():
         else:
             return {'message': f'stars column must be included.'}, 409
         
+        if location_str:
+            retrieved_location_object = db.session.scalar(db.select(Location).filter_by(location_name=location_str))
+            if not retrieved_location_object: 
+                location_list = db.session.scalars(db.select(Location))
+                location_names = locations_schema_exclude.dump(location_list)
+                location_array = []
+                for location in location_names:
+                    location_array.append(location['location_name'])
+                if location_str not in location_array:
+                    return {'error': f'Not a valid location. Must be one of the following; {location_array}'}, 409
+        else:
+            return {'message': f'location_name must be included.'}, 409
+        
+
         track = Track(
             name=body_data.get('name'),
             duration=body_data.get('duration'),
@@ -87,6 +103,7 @@ def create_track():
             descent=body_data.get('descent'),
             difficulty_id=retrieved_difficulty_object.id,
             rating_id=retrieved_rating_object.id,
+            location_id=retrieved_location_object.id,
             user_id=get_jwt_identity()
         )
 
@@ -94,8 +111,6 @@ def create_track():
         db.session.commit()
 
         return track_schema.dump(track), 201
-    # except ValidationError as err:
-    #     return {'error': err.messages}, 400
     except IntegrityError as err:
          if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {'error': f'The {err.orig.diag.column_name} attribute is required' }, 409
@@ -159,7 +174,21 @@ def update_one_track(id):
                     rating_array.append(rating['stars'])
                 if rating_str not in rating_array:
                     return {'error': f'Not a valid rating. Must be one of the following; {rating_array}'}, 409
-            
+                
+        location_str = body_data.get('location_name')
+        if location_str:
+            retrieved_location_object = db.session.scalar(db.select(Location).filter_by(location_name=location_str))
+            if retrieved_location_object:
+                track.location_id = retrieved_location_object.id
+            if not retrieved_location_object: 
+                location_list = db.session.scalars(db.select(Location))
+                location_names = locations_schema_exclude.dump(location_list)
+                location_array = []
+                for location in location_names:
+                    location_array.append(location['location_name'])
+                if location_str not in location_array:
+                    return {'error': f'Not a valid location. Must be one of the following; {location_array}'}, 409
+        
         db.session.commit()
         return track_schema.dump(track)
     else:

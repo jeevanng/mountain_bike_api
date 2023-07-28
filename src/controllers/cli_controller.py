@@ -7,6 +7,7 @@ from models.difficulty import Difficulty
 from models.rating import Rating
 from models.country import Country
 from models.region import Region
+from models.location import Location
 from datetime import date
 import datetime
 
@@ -54,19 +55,19 @@ def seed_db():
 
     countries = [
         Country(
-            country="Australia"
+            country_name="Australia"
         ),
         Country(
-            country="New Zealand"
+            country_name="New-Zealand"
         ),
         Country(
-            country="Peru"
+            country_name="Peru"
         ),
         Country(
-            country="Canada"
+            country_name="Canada"
         ),
         Country(
-            country="Italy"
+            country_name="Italy"
         ),
     ]
 
@@ -74,32 +75,73 @@ def seed_db():
 
     regions = [
         Region(
-            region="Victoria",
+            region_name="Victoria",
             country=countries[0]
         ),
         Region(
-            region="Tasmania",
+            region_name="Tasmania",
             country=countries[0]
         ),
         Region(
-            region="Cusco",
+            region_name="Cusco",
             country=countries[2]
         ),
         Region(
-            region="British Columbia",
+            region_name="British-Columbia",
             country=countries[3]
         ),
         Region(
-            region="Ontario",
+            region_name="Ontario",
             country=countries[3]
         ),
         Region(
-            region="Alberta",
+            region_name="Alberta",
             country=countries[3]
         ),
     ]
 
     db.session.add_all(regions)
+
+    locations = [
+        Location(
+            location_name="Lysterfield",
+            latitude=-37.933109,
+            longitude=145.303299,
+            region=regions[0]
+        ),
+        Location(
+            location_name="Bright",
+            latitude=-36.730194,
+            longitude=146.960896,
+            region=regions[0]
+        ),
+        Location(
+            location_name="Plenty-Gorge",
+            latitude=-37.020100,
+            longitude=144.964600,
+            region=regions[0]
+        ),
+        Location(
+            location_name="Whistler",
+            latitude=50.116322,
+            longitude=-122.957359,
+            region=regions[3]
+        ),
+        Location(
+            location_name="Maydena",
+            latitude=-42.75584,
+            longitude=146.62636,
+            region=regions[1]
+        ),
+        Location(
+            location_name="Turkey-Point",
+            latitude=42.680986,
+            longitude=-80.332176,
+            region=regions[4]
+        ),
+    ]
+
+    db.session.add_all(locations)
 
     ratings = [
         Rating(
@@ -154,6 +196,7 @@ def seed_db():
             descent=-102,
             difficulty=difficulties[0],
             rating=ratings[1],
+            location=locations[0],
             user=users[0]
         ),
         Track(
@@ -165,6 +208,7 @@ def seed_db():
             descent=-91,
             difficulty=difficulties[1],
             rating=ratings[3],
+            location=locations[0],
             user=users[0]
         ),
         Track(
@@ -176,6 +220,7 @@ def seed_db():
             descent=-114,
             difficulty=difficulties[2],
             rating=ratings[4],
+            location=locations[3],
             user=users[0]
         ),
     ]
