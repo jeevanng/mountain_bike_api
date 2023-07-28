@@ -67,5 +67,5 @@ def delete_region(country_name, region_name):
         db.session.commit()
         return {'message': f'Region {region.region_name} delete successfully'}
     else:
-        return {'message': f'Region name of {region_name} was not found in {country_name}. Or the {region_name} does not exist.'}, 404
+        return {'message': f'Region name of {region_name} was not found in {country_name}. Or region {region_name} does not exist.'}, 404
     
