@@ -21,7 +21,7 @@ def get_all_countries():
 @countries_bp.route('/<country_name>')
 @jwt_required()
 def get_one_country(country_name):
-    stmt = db.select(Country).filter_by(country=country_name)
+    stmt = db.select(Country).filter_by(country_name=country_name)
     country = db.session.scalar(stmt)
     if country:
         return country_schema.dump(country)
@@ -49,4 +49,17 @@ def create_country():
             return {'error': f"Country {countries.country_name}' is already in use"}, 409
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {'error': f'The {err.orig.diag.column_name} is required' }, 409
+        
+@countries_bp.route('/<country_name>', methods=['DELETE'])
+@jwt_required()
+@authorise_as_admin
+def delete_country(country_name):
+        stmt = db.select(Country).filter_by(country_name=country_name)
+        country = db.session.scalar(stmt)
+        if country:
+            db.session.delete(country)
+            db.session.commit()
+            return {'message': f'Country {country.country_name} was deleted successfully'}
+        else:
+            return {'message': f'Country name of {country_name} was not found'}, 404
     

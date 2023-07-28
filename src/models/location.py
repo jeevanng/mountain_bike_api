@@ -13,7 +13,7 @@ class Location(db.Model):
     region_id = db.Column(db.Integer, db.ForeignKey('regions.id'), nullable=False)
 
     region = db.relationship('Region', back_populates='locations')
-    tracks = db.relationship('Track', back_populates='location')
+    tracks = db.relationship('Track', back_populates='location', cascade='all, delete')
 
 class LocationSchema(ma.Schema):
     region = fields.Nested('RegionSchema', exclude=['locations'])

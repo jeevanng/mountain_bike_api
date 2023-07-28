@@ -50,5 +50,17 @@ def create_region(country_name):
             return {'error': f"Region {regions.region_name}' is already in use"}, 409
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {'error': f'The {err.orig.diag.column_name} is required' }, 409
-    
+        
+@regions_bp.route('/<region_name>', methods=['DELETE'])
+@jwt_required()
+@authorise_as_admin
+def delete_region(country_name, region_name):
+    stmt = db.select(Region).filter_by(region_name=region_name)
+    region = db.session.scalar(stmt)
+    if region:
+        db.session.delete(region)
+        db.session.commit()
+        return {'message': f'Region {region.region_name} delete successfully'}
+    else:
+        return {'message': f'Region name of {region_name} was not found'}, 404
     
