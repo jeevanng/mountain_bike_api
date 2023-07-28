@@ -34,7 +34,7 @@ def create_rating():
         body_data = request.get_json()
 
         ratings = Rating(
-            stars = body_data.get('stars')
+            stars=body_data.get('stars')
         )
         
         db.session.add(ratings)

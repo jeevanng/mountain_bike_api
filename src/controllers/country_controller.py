@@ -36,7 +36,7 @@ def create_country():
         body_data = country_schema.load(request.get_json())
         
         countries = Country(
-            country = body_data.get('country')  
+            country_name=body_data.get('country_name')  
         )
 
         db.session.add(countries)
@@ -46,7 +46,7 @@ def create_country():
 
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
-            return {'error': f"Country {countries.country}' is already in use"}, 409
+            return {'error': f"Country {countries.country_name}' is already in use"}, 409
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {'error': f'The {err.orig.diag.column_name} is required' }, 409
     

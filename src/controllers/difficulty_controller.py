@@ -33,7 +33,7 @@ def create_difficulty():
         body_data = difficulty_schema.load(request.get_json())
 
         difficulties = Difficulty(
-            difficulty_name = body_data.get('difficulty_name')
+            difficulty_name=body_data.get('difficulty_name')
         )
         
         db.session.add(difficulties)

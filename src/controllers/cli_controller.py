@@ -55,19 +55,19 @@ def seed_db():
 
     countries = [
         Country(
-            country="Australia"
+            country_name="Australia"
         ),
         Country(
-            country="New-Zealand"
+            country_name="New-Zealand"
         ),
         Country(
-            country="Peru"
+            country_name="Peru"
         ),
         Country(
-            country="Canada"
+            country_name="Canada"
         ),
         Country(
-            country="Italy"
+            country_name="Italy"
         ),
     ]
 
@@ -75,27 +75,27 @@ def seed_db():
 
     regions = [
         Region(
-            region="Victoria",
+            region_name="Victoria",
             country=countries[0]
         ),
         Region(
-            region="Tasmania",
+            region_name="Tasmania",
             country=countries[0]
         ),
         Region(
-            region="Cusco",
+            region_name="Cusco",
             country=countries[2]
         ),
         Region(
-            region="British-Columbia",
+            region_name="British-Columbia",
             country=countries[3]
         ),
         Region(
-            region="Ontario",
+            region_name="Ontario",
             country=countries[3]
         ),
         Region(
-            region="Alberta",
+            region_name="Alberta",
             country=countries[3]
         ),
     ]
