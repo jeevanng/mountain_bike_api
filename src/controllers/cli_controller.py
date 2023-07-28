@@ -100,6 +100,8 @@ def seed_db():
         ),
     ]
 
+    db.session.add_all(regions)
+
     locations = [
         Location(
             location="Lysterfield",
@@ -139,7 +141,7 @@ def seed_db():
         ),
     ]
 
-    db.session.add_all(regions)
+    db.session.add_all(locations)
 
     ratings = [
         Rating(
@@ -194,6 +196,7 @@ def seed_db():
             descent=-102,
             difficulty=difficulties[0],
             rating=ratings[1],
+            location=locations[0],
             user=users[0]
         ),
         Track(
@@ -205,6 +208,7 @@ def seed_db():
             descent=-91,
             difficulty=difficulties[1],
             rating=ratings[3],
+            location=locations[0],
             user=users[0]
         ),
         Track(
@@ -216,6 +220,7 @@ def seed_db():
             descent=-114,
             difficulty=difficulties[2],
             rating=ratings[4],
+            location=locations[3],
             user=users[0]
         ),
     ]
