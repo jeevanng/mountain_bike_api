@@ -111,8 +111,6 @@ def create_track():
         db.session.commit()
 
         return track_schema.dump(track), 201
-    # except ValidationError as err:
-    #     return {'error': err.messages}, 400
     except IntegrityError as err:
          if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {'error': f'The {err.orig.diag.column_name} attribute is required' }, 409
@@ -176,7 +174,21 @@ def update_one_track(id):
                     rating_array.append(rating['stars'])
                 if rating_str not in rating_array:
                     return {'error': f'Not a valid rating. Must be one of the following; {rating_array}'}, 409
-            
+                
+        location_str = body_data.get('location_name')
+        if location_str:
+            retrieved_location_object = db.session.scalar(db.select(Location).filter_by(location_name=location_str))
+            if retrieved_location_object:
+                track.location_id = retrieved_location_object.id
+            if not retrieved_location_object: 
+                location_list = db.session.scalars(db.select(Location))
+                location_names = locations_schema_exclude.dump(location_list)
+                location_array = []
+                for location in location_names:
+                    location_array.append(location['location_name'])
+                if location_str not in location_array:
+                    return {'error': f'Not a valid location. Must be one of the following; {location_array}'}, 409
+        
         db.session.commit()
         return track_schema.dump(track)
     else:

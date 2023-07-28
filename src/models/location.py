@@ -21,7 +21,7 @@ class LocationSchema(ma.Schema):
 
     location_name = fields.String(required=True, validate=And(
         Length(min=2, error='Location must be at least 2 characters long'),
-        Regexp("^[a-zA-Z ]+$", error="Only letters and spaces are allowed")))
+        Regexp("^[a-zA-Z-]+$", error="Only letters and - are allowed. Please use - for spaces instead.")))
     latitude = fields.Float(required=True)
     longitude = fields.Float(required=True)
      
