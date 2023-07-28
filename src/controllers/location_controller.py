@@ -64,3 +64,28 @@ def create_location(country_name, region_name):
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {'error': f'The {err.orig.diag.column_name} is required' }, 409
         
+@locations_bp.route('/<location_name>', methods=['DELETE'])
+@jwt_required()
+@authorise_as_admin
+def delete_location(country_name, region_name, location_name):
+    country_stmt = db.select(Country).filter_by(country_name=country_name)
+    country = db.session.scalar(country_stmt)
+    if not country:
+        return {'error': f'Country {country_name} does not exist'}, 404
+        
+    region_stmt = db.select(Region).filter_by(region_name=region_name, country_id=country.id)
+    region = db.session.scalar(region_stmt)
+    if not region: 
+        return {'error': f'Region {region_name} does not exist in {country_name}'}, 404
+        
+    stmt = db.select(Location).filter_by(region_id=region.id, location_name=location_name)
+    location = db.session.scalar(stmt)
+    if location:
+        db.session.delete(location)
+        db.session.commit()
+        return {'message': f'Location {location.location_name} deleted successfully'}
+    else:
+        return {'message': f'Location name of {location_name} was not found in {region_name}. Or location {location_name} does not exist.'}, 404
+    
+
+        

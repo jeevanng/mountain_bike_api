@@ -55,12 +55,17 @@ def create_region(country_name):
 @jwt_required()
 @authorise_as_admin
 def delete_region(country_name, region_name):
-    stmt = db.select(Region).filter_by(region_name=region_name)
+    country_stmt = db.select(Country).filter_by(country_name=country_name)
+    country = db.session.scalar(country_stmt)
+    if not country:
+        return {'error': f'Country {country_name} does not exist'}, 404
+    
+    stmt = db.select(Region).filter_by(country_id=country.id, region_name=region_name)
     region = db.session.scalar(stmt)
     if region:
         db.session.delete(region)
         db.session.commit()
         return {'message': f'Region {region.region_name} delete successfully'}
     else:
-        return {'message': f'Region name of {region_name} was not found'}, 404
+        return {'message': f'Region name of {region_name} was not found in {country_name}. Or the {region_name} does not exist.'}, 404
     
