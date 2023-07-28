@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from controllers.track_controller import authorise_as_admin
 from models.country import Country, country_schema, country_schema_exclude, countries_schema, countries_schema_exclude
 from controllers.region_controller import regions_bp
+from controllers.track_controller import authorise_as_admin
 from sqlalchemy.exc import IntegrityError
 from psycopg2 import errorcodes
 
@@ -27,5 +28,25 @@ def get_one_country(country_name):
     else:
         return {'error': f'Country {country_name} does not exist'}, 404
     
+@countries_bp.route('/', methods=['POST'])
+@jwt_required()
+@authorise_as_admin
+def create_country():
+    try:
+        body_data = country_schema.load(request.get_json())
+        
+        countries = Country(
+            country = body_data.get('country')  
+        )
 
+        db.session.add(countries)
+        db.session.commit()
+
+        return country_schema_exclude.dump(countries), 201
+
+    except IntegrityError as err:
+        if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+            return {'error': f"Country {countries.country}' is already in use"}, 409
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {'error': f'The {err.orig.diag.column_name} is required' }, 409
     
