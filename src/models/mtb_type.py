@@ -12,6 +12,11 @@ class MountainBike(db.Model):
 
 class MountainBikeSchema(ma.Schema):
     recommendations = fields.List(fields.Nested('RecommendationSchema', exclude=['mountain_bike']))
+
+    id = fields.Integer()
+    type = fields.String()
+    description = fields.String()
+
     fields = ('id', 'type', 'description', 'recommendations')
     ordered = True
 

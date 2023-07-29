@@ -24,13 +24,15 @@ class Track(db.Model):
     difficulty = db.relationship('Difficulty', back_populates='tracks')
     rating = db.relationship('Rating', back_populates='tracks')
     location = db.relationship('Location', back_populates='tracks')
-    
+    recommendations = db.relationship('Recommendation', back_populates='track', cascade='all, delete')
+
 class TrackSchema(ma.Schema):
     user = fields.Nested('UserSchema', only=['name', 'email'])
     comments = fields.List(fields.Nested('CommentSchema', exclude=['track']))
     difficulty = fields.Nested('DifficultySchema', exclude=['tracks'])
     rating = fields.Nested('RatingSchema', exclude=['tracks'])
     location = fields.Nested('LocationSchema', exclude=['tracks'])
+    recommendations = fields.List(fields.Nested('RecommendationSchema', exclude=['track']))
 
     name = fields.String(required=True, validate=And(
         Length(min=2, error='Title must be at least 2 characters long'),
@@ -58,7 +60,7 @@ class TrackSchema(ma.Schema):
         return data
 
     class Meta:
-        fields = ('id', 'name', 'duration', 'description', 'distance', 'climb', 'descent', 'difficulty', 'rating', 'location', 'user', 'comments')
+        fields = ('id', 'name', 'duration', 'description', 'distance', 'climb', 'descent', 'difficulty', 'rating', 'location', 'recommendations', 'user', 'comments')
         ordered = True
 
 track_schema = TrackSchema()

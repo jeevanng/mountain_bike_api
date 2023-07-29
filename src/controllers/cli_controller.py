@@ -213,32 +213,6 @@ def seed_db():
 
     db.session.add_all(mountain_bike_types)
 
-    recommendations = [
-        Recommendation(
-            mountain_bike=mountain_bike_types[0]
-        ),
-        Recommendation(
-            mountain_bike=mountain_bike_types[1]
-        ),
-        Recommendation(
-            mountain_bike=mountain_bike_types[2]
-        ),
-        Recommendation(
-            mountain_bike=mountain_bike_types[3]
-        ),
-        Recommendation(
-            mountain_bike=mountain_bike_types[4]
-        ),
-        Recommendation(
-            mountain_bike=mountain_bike_types[3]
-        ),
-        Recommendation(
-            mountain_bike=mountain_bike_types[2]
-        ),
-    ]
-    
-    db.session.add_all(recommendations)
-
     tracks = [
         Track(
             name="Fall Line",
@@ -303,6 +277,39 @@ def seed_db():
     ]
 
     db.session.add_all(tracks)
+
+    recommendations = [
+        Recommendation(
+            mountain_bike=mountain_bike_types[0],
+            track=tracks[1]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[1],
+            track=tracks[1]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[2],
+            track=tracks[0]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[3],
+            track=tracks[0]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[4],
+            track=tracks[4]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[3],
+            track=tracks[4]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[2],
+            track=tracks[4]
+        ),
+    ]
+    
+    db.session.add_all(recommendations)
 
     comments = [
         Comment(
