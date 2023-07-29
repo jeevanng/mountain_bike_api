@@ -8,6 +8,8 @@ from models.rating import Rating
 from models.country import Country
 from models.region import Region
 from models.location import Location
+from models.mtb_type import MountainBike
+from models.recommendation import Recommendation
 from datetime import date
 import datetime
 
@@ -186,6 +188,31 @@ def seed_db():
 
     db.session.add_all(difficulties)
 
+    mountain_bike_types = [
+        MountainBike(
+            type="Hard-Tail",
+            description="Suspension on the front fork, not rear"    
+        ),
+        MountainBike(
+            type="Cross-Country",
+            description="Low weight, tailored for back country"    
+        ),
+        MountainBike(
+            type="Trail",
+            description="Front fork travel between 120-150mm"    
+        ),
+        MountainBike(
+            type="Enduro",
+            description="Less versatile than cross-country and trail bikes. Beefier for downhill sections. Travel greater than 150mm."    
+        ),
+        MountainBike(
+            type="Downhill",
+            description="Maximum suspension. Front fork 200mm plus. Not good for riding uphill."    
+        ),
+    ]
+
+    db.session.add_all(mountain_bike_types)
+
     tracks = [
         Track(
             name="Fall Line",
@@ -201,7 +228,7 @@ def seed_db():
         ),
         Track(
             name="Wombat",
-            duration=datetime.time(hour=0, minute=6, second=22),
+            duration=datetime.time(hour=0, minute=15, second=29),
             description="Jump on the roller coaster express and send it down these manicured flowly berms. Hard packed dirt for ultimate smoothness",
             distance=1700,
             climb=5,
@@ -209,6 +236,30 @@ def seed_db():
             difficulty=difficulties[1],
             rating=ratings[3],
             location=locations[0],
+            user=users[0]
+        ),
+        Track(
+            name="Toilet Bowl",
+            duration=datetime.time(hour=1, minute=16, second=24),
+            description="Don't get FLUSHED!",
+            distance=4000,
+            climb=11,
+            descent=-500,
+            difficulty=difficulties[4],
+            rating=ratings[4],
+            location=locations[3],
+            user=users[0]
+        ),
+        Track(
+            name="Rock Garden",
+            duration=datetime.time(hour=0, minute=32, second=24),
+            description="Bumpy technical rock garden.",
+            distance=1300,
+            climb=324,
+            descent=0,
+            difficulty=difficulties[3],
+            rating=ratings[2],
+            location=locations[3],
             user=users[0]
         ),
         Track(
@@ -220,12 +271,57 @@ def seed_db():
             descent=-114,
             difficulty=difficulties[2],
             rating=ratings[4],
-            location=locations[3],
+            location=locations[1],
             user=users[0]
+        ),
+        Track(
+            name="Underground Tunnel",
+            duration=datetime.time(hour=0, minute=54, second=24),
+            description="Dark",
+            distance=1034,
+            climb=3,
+            descent=-5,
+            difficulty=difficulties[2],
+            rating=ratings[4],
+            location=locations[2],
+            user=users[1]
         ),
     ]
 
     db.session.add_all(tracks)
+
+    recommendations = [
+        Recommendation(
+            mountain_bike=mountain_bike_types[0],
+            track=tracks[1]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[1],
+            track=tracks[1]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[2],
+            track=tracks[0]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[3],
+            track=tracks[0]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[4],
+            track=tracks[4]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[3],
+            track=tracks[4]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[2],
+            track=tracks[4]
+        ),
+    ]
+    
+    db.session.add_all(recommendations)
 
     comments = [
         Comment(
