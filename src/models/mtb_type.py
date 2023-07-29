@@ -5,7 +5,7 @@ class MountainBike(db.Model):
     __tablename__ = "mountain_bikes"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False, unique=True)
+    type = db.Column(db.String, nullable=False, unique=True)
     description = db.Column(db.Text)
 
 class MountainBikeSchema(ma.Schema):
