@@ -9,6 +9,7 @@ from models.country import Country
 from models.region import Region
 from models.location import Location
 from models.mtb_type import MountainBike
+from models.recommendation import Recommendation
 from datetime import date
 import datetime
 
@@ -211,6 +212,32 @@ def seed_db():
     ]
 
     db.session.add_all(mountain_bike_types)
+
+    recommendations = [
+        Recommendation(
+            mountain_bike=mountain_bike_types[0]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[1]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[2]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[3]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[4]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[3]
+        ),
+        Recommendation(
+            mountain_bike=mountain_bike_types[2]
+        ),
+    ]
+    
+    db.session.add_all(recommendations)
 
     tracks = [
         Track(
