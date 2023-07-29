@@ -190,7 +190,7 @@ def seed_db():
 
     mountain_bike_types = [
         MountainBike(
-            type="Hard Tail",
+            type="Hard-Tail",
             description="Suspension on the front fork, not rear"    
         ),
         MountainBike(
@@ -273,6 +273,18 @@ def seed_db():
             rating=ratings[4],
             location=locations[1],
             user=users[0]
+        ),
+        Track(
+            name="Underground Tunnel",
+            duration=datetime.time(hour=0, minute=54, second=24),
+            description="Dark",
+            distance=1034,
+            climb=3,
+            descent=-5,
+            difficulty=difficulties[2],
+            rating=ratings[4],
+            location=locations[2],
+            user=users[1]
         ),
     ]
 

@@ -11,14 +11,14 @@ class MountainBike(db.Model):
     recommendations = db.relationship('Recommendation', back_populates='mountain_bike', cascade='all, delete')
 
 class MountainBikeSchema(ma.Schema):
-    recommendations = fields.List(fields.Nested('RecommendationSchema', exclude=['mountain_bike']))
-
     id = fields.Integer()
     type = fields.String()
     description = fields.String()
+    recommendations = fields.List(fields.Nested('RecommendationSchema', exclude=['mountain_bike']))
 
     fields = ('id', 'type', 'description', 'recommendations')
     ordered = True
 
 mountain_bike_schema = MountainBikeSchema()
 mountain_bikes_schema = MountainBikeSchema(many=True)
+mountain_bikes_schema_exclude = MountainBikeSchema(many=True, exclude=['recommendations'])
