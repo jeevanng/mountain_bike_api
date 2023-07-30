@@ -11,6 +11,7 @@ class Region(db.Model):
     country_id = db.Column(db.Integer, db.ForeignKey('countries.id'), nullable=False)
 
     country = db.relationship('Country', back_populates='regions')
+    # When a region is deleted, delete all the locations linked to that region
     locations = db.relationship('Location', back_populates='region', cascade='all, delete')
 
 class RegionSchema(ma.Schema):

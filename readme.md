@@ -2,6 +2,10 @@
 
 Written by Jeevan Ng 
 
+# GitHub Link
+
+https://github.com/jeevanng/mountain_bike_api
+
 # Overview 
 
 This application will serve as a centralised platform for mountain biking enthusiasts to access comprehensive information about single track routes across the globe. 
@@ -82,19 +86,283 @@ Some of the drawbacks are;
 
 # Document all endpoints for your API (R5)
 
+*localhost:8080/auth/register*
+
+- This will register a new users.
+- Requires email and password as a minimum
+
+*localhost:8080/auth/login*
+
+- User is able to login with details
+- Requires email and password 
+
+*localhost:8080/tracks* [GET]
+
+- Get a list of all the tracks in the database
+
+*localhost:8080/tracks/<<int:id>>* [GET]
+
+- Get information on a particular track via track id 
+
+*localhost:8080/tracks* [POST]
+
+- Post a new track 
+
+*localhost:8080/tracks/<<int:id>>* [DELETE]
+
+- Delete a track via track id 
+
+*localhost:8080/tracks/<<int:id>>* [PUT, PATCH]
+
+- Edit/update track with PUT or PATCH method
+
+*localhost:8080/tracks/<<int:id>>/comments* [POST]
+
+- Post a new comment on a particular track via track id 
+
+*localhost:8080/tracks/<<int:id>>/comments/<<int:comment_id>>* [DELETE]
+
+- Delete comment via comment id, on a particular track via track id 
+
+*localhost:8080/tracks/<<int:id>>/comments/<<int:comment_id>>* [PATCH]
+
+- Edit/Update comment via comment id, on a particular track via track id 
+
+*localhost:8080/difficulty* 
+
+- Get a list of all difficulties
+
+*localhost:8080/difficulty/<<int:id>>* 
+
+- Get a list of tracks linked to a particular difficulty id. 
+- Retrieve all tracks at a certain difficulty 
+
+*localhost:8080/difficulty* [POST]
+
+- Create new difficulty 
+
+*localhost:8080/difficulty/<<int:id>>* [PUT, PATCH]
+
+- Update the name of a difficulty via difficulty id 
+
+*localhost:8080/difficulty/<<int:id>>* [DELETE]
+
+- Delete a difficulty via id 
+
+*localhost:8080/rating* 
+
+- Get list of all ratings
+
+*localhost:8080/rating* [POST]
+
+- Create a new rating
+
+*localhost:8080/rating/<<int:id>>* [PUT, PATCH]
+
+- Edit/update an existing rating
+
+*localhost:8080/rating/<<int:id>>* [DELETE]
+
+- Delete an existing rating
+
+*localhost:8080/country*
+
+- Get a list of all countries
+
+*localhost:8080/country* [POST]
+
+- Create a new country
+
+*localhost:8080/country/<country_name>* [DELETE]
+
+- Delete a country by country_name
+
+*localhost:8080/country/<country_name>*
+
+- Get a list of regions associated to country_name
+
+*localhost:8080/country/<country_name>/region/<region_name>*
+
+- Get a list of locations from a particular region, region_name, which belongs to a certain country, country_name
+
+*localhost:8080/country/<country_name>/region* [POST]
+
+- Create a new region belonging to country_name
+
+*localhost:8080/country/<country_name>/region/<region_name>*[DELETE]
+
+- Delete a region via region_name, if it belongs to a country, country_name
+
+*localhost:8080/country/<country_name>/region/<region_name>/location* [POST]
+
+- Create a new location for the region, region_name, ensuring it exists in the country, country_name
+
+*localhost:8080/country/<country_name>/region/<region_name>/location/<location_name>*
+
+- Get all the tracks that belong to a certain location, location_name, if it belongs to the region, region_name, and if it exists within that country, country_name
+- The location needs to exist in the region, and the region needs to exist in the country.
+- E.g. If country_name is Australia;
+    - Only regions such as Victoria, Tasmania etc will be valid. Whatever exists in the database.
+
+*localhost:8080/country/<country_name>/region/<region_name>/location/W<location_name>* [DELETE]
+
+- Delete a location and it's associated tracks.
+- Must be linked to the correct region.
+- Region must exist in the country.
+
+*localhost:8080/mtb* 
+
+- Get all the mountain bike types 
+
+*localhost:8080/mtb/<<int:id>>* 
+
+- Get all the recommended tracks for a certain type of mountain bike, id. 
+
+**NOTE**
+
+The countries, regions and locations would not normally have POST or DELETE methods, as these would normally be a list of dictionaries from a third party database.
+
+The function to create and delete countries, regions and locations would normally be omitted, and the database will just have these pre-populated. This is because these values will not change and remain static. 
+
+The ability to create and delete are only added to test the API's functionality. 
+
+
 # ERD for the application (R6)
 
 ![ERD](./docs/mtb_erd.drawio.png)
 
 # Detail any third party services that your *app* will use (R7)
 
+1. Flask 
+    - Flask is a web framework for Python used to build web applications. It provides the architecture to develop web API's.
+2. Flask-JWT-Extended 
+    - This third party service is an extension of Flask and adds JSON Web Token (JWT) functionality to authenticate and authorise users.
+3. SQLAlchemy 
+    - This is the ORM library for Python. With this service, the developer is able to interact with databases and manage models with Python classes.
+4. Marshmallow
+    - Used for object serialisation and deserialisation. 
+5. Psycopg2 
+    - A PostgreSQL adapter for Python. Enables Flask to connect and interact with a PostgreSQL database.
+6. PostgreSQL
+    - Open-source relational database management system. 
+    - Store and manage data for the API 
+7. Flask Blueprint 
+    - Help maintain and organise code by modularising application's routes and views
+8. Bcrypt
+    - Used for password hashing. 
+    - Secure way to hash and verify passwords 
+
 # Describe your projects *models* in terms of relationships they have with each other (R8)
+
+1. Users
+    - Contains primary key 
+2. Comments
+    - Contains primary key 
+    - Will hold two foreign keys 
+        - user_id
+        - track_id
+        - This is to identify that a particular comment belongs to a certain user (user_id) and track (track_id)
+3. Tracks
+    - Contains primary key 
+    - Contains four foreign keys 
+        - location_id
+        - rating_id
+        - difficulty_id
+        - user_id
+        - Identifies that a track belongs to a certain location, has a certain rating and difficulty and has been created by a particular user
+4. Countries
+    - Contains primary key 
+5. Regions
+    - Contains primary key
+    - Contains one foreign key
+        - country_id
+        - Foreign key will show which country it belongs to
+6. Locations
+    - Contains primary key
+    - Contains one foreign key 
+        - region_id
+        - Identifies that it belongs to a certain region (region_id)
+7. Difficulties
+    - Contains primary key
+8. Ratings
+    - Contains primary key 
+9. MTB Types
+    - Contains primary key 
+10. Recommendations 
+    - Contains primary key 
+    - Contains two foreign keys
+        - mountain_bike_id
+        - track_id
+        - Used to identify which mountain bike types are recommended for certain tracks
+        - Gives the ability to look up mountain bike type and get a list of which tracks are recommended for that bike 
 
 # Discuss the database relations to be implemented in your application (R9)
 
+Reference the ERD for a complete understanding.
+
+The relationships implemented in the application are defined below;
+
+1. User-Track
+- One-to-many relationship 
+- A user can have or create many tracks. A track can only belong to one user. 
+- In the application, this user must be an admin
+
+2. User-Comment
+- One-to-many relationship 
+- A user can create many comments
+- A comment can only be linked/created by one user
+
+3. Track-Comment
+- One-to-many relationship
+- A track can have multiple or many comments
+- A comment can only belong or be posted on one track
+
+4. Difficulty-Track
+- One-to-many relationship
+- A difficulty can be associated with zero or many tracks
+- A track can only have one difficulty 
+
+5. Rating-Track
+- One-to-many relationship
+- A rating can be associated with zero or many tracks
+- A track can only have one rating
+
+6. Country-Region
+- One-to-many relationship
+- A country can have zero or many regions
+- A region can only belong to one country
+
+7. Region-Location
+- One-to-many relationship
+- A region can have zero or many locations
+- A location can only belong to one region
+
+8. Location-Track
+- One-to-many relationship
+- A location can have zero or many tracks
+- A track can only belong to one location
+
+9. MTB Type-Recommendation
+- One-to-many relationship
+- A MTB type can have zero or many recommendations
+- A recommendation can only have one MTB type 
+
+10. Recommendation-Track
+- One-to-many relationship
+- A recommendation can only belong to one Track
+- A track can have multiple or many recommendations (i.e. different mtb types recommended for the track)
+
 # Describe the way tasks are allocated and tracked in your project (R10)
 
+Tasks are allocated and tracked through an application called *Trello*. 
 
+Link; https://trello.com/b/JIUllzQO/mountain-bike-api
+
+![trello_1](./docs/trello_1.png)
+
+![trello_2](./docs/trello_2.png)
+
+Please visit link for full in depth allocation of tasks. Screen shots are just a snippet of what it looks like. 
 
 # References
 
