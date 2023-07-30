@@ -20,6 +20,7 @@ def get_all_difficulties():
 @difficulties_bp.route('/<int:id>')
 @jwt_required()
 def get_track_via_difficulty(id):
+    # Query Difficulty model and entity and filter by id=id
     stmt = db.select(Difficulty).filter_by(id=id)
     difficulty = db.session.scalar(stmt)
     if difficulty:
@@ -55,6 +56,7 @@ def create_difficulty():
 @authorise_as_admin
 def delete_difficulty(id):
     try:
+        # Query Difficulty model and entity and filter by id=id
         stmt = db.select(Difficulty).filter_by(id=id)
         difficulty = db.session.scalar(stmt)
         if difficulty:
@@ -76,6 +78,7 @@ def delete_difficulty(id):
 @authorise_as_admin
 def update_difficulty(id):
     body_data = difficulty_schema.load(request.get_json())
+    # Query Difficulty model and entity and filter by id=id
     stmt = db.select(Difficulty).filter_by(id=id)
     difficulty = db.session.scalar(stmt)
     if difficulty:

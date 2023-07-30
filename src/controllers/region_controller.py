@@ -64,6 +64,7 @@ def create_region(country_name):
 @jwt_required()
 @authorise_as_admin
 def delete_region(country_name, region_name):
+    # Query the database for the Country entity and filter by country_name=country_name
     country_stmt = db.select(Country).filter_by(country_name=country_name)
     country = db.session.scalar(country_stmt)
     if not country:

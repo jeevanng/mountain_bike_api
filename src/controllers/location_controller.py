@@ -39,11 +39,15 @@ def get_location(country_name, region_name, location_name):
 @authorise_as_admin
 def create_location(country_name, region_name):
     try:
+        # Query Country model and filter where country_name=country_name
         country_stmt = db.select(Country).filter_by(country_name=country_name)
         country = db.session.scalar(country_stmt)
         if not country:
             return {'error': f'Country {country_name} does not exist'}, 404
         
+        # Check to see whether the region is within the country stated
+        # Check the region entity and filter by region_name=region_name and the country.id. 
+        # The country will exist otherwise the error above would have been given
         region_stmt = db.select(Region).filter_by(region_name=region_name, country_id=country.id)
         region = db.session.scalar(region_stmt)
         if not region: 

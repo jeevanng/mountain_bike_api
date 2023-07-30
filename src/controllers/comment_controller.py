@@ -13,6 +13,7 @@ comments_bp = Blueprint('comments', __name__,)
 @jwt_required()
 def create_comment(track_id):
     body_data = request.get_json()
+    # Query the Track model, find the entity and filter by id=track_id
     stmt = db.select(Track).filter_by(id=track_id)
     track = db.session.scalar(stmt)
     if track:
@@ -33,6 +34,7 @@ def create_comment(track_id):
 @comments_bp.route('/<int:comment_id>', methods=['DELETE'])
 @jwt_required()
 def delete_comment(track_id, comment_id):
+    # Query the Comment model and entity and filter by id=comment_id
     stmt = db.select(Comment).filter_by(id=comment_id)
     comment = db.session.scalar(stmt)
 

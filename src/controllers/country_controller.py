@@ -18,6 +18,7 @@ countries_bp.register_blueprint(locations_bp, url_prefix='/<country_name>/region
 @countries_bp.route('/')
 @jwt_required()
 def get_all_countries():
+    # Select all the countries in the Country model and entity
     stmt = db.select(Country)
     countries = db.session.scalars(stmt)
     return countries_schema_exclude.dump(countries)
@@ -26,6 +27,7 @@ def get_all_countries():
 @countries_bp.route('/<country_name>')
 @jwt_required()
 def get_one_country(country_name):
+    # Query the Country model and filter by country_name=country_name
     stmt = db.select(Country).filter_by(country_name=country_name)
     country = db.session.scalar(stmt)
     if country:
@@ -61,6 +63,7 @@ def create_country():
 @jwt_required()
 @authorise_as_admin
 def delete_country(country_name):
+        # Query the Country model and filter by country_name=country_name
         stmt = db.select(Country).filter_by(country_name=country_name)
         country = db.session.scalar(stmt)
         if country:

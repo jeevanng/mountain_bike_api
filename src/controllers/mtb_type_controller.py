@@ -9,6 +9,7 @@ mtb_types_bp = Blueprint('mtb_type', __name__, url_prefix='/mtb')
 @mtb_types_bp.route('/')
 @jwt_required()
 def get_all_mtb_types():
+    # Select everything in the Mountain Bike entity 
     stmt = db.select(MountainBike)
     mtb_types = db.session.scalars(stmt)
     return mountain_bikes_schema_exclude.dump(mtb_types)
@@ -17,6 +18,7 @@ def get_all_mtb_types():
 @mtb_types_bp.route('/<int:id>')
 @jwt_required()
 def get_track_by_mtb_type(id):
+    # Query Mountain Bike model and filter where id=id
     stmt = db.select(MountainBike).filter_by(id=id)
     mtb_type = db.session.scalar(stmt)
     if mtb_type:

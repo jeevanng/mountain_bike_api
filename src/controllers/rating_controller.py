@@ -21,6 +21,7 @@ def get_all_ratings():
 @ratings_bp.route('/<int:id>')
 @jwt_required()
 def get_track_via_rating(id):
+    # Query Rating entity and filter by id=id
     stmt = db.select(Rating).filter_by(id=id)
     rating = db.session.scalars(stmt)
     if rating:
@@ -59,6 +60,7 @@ def create_rating():
 def update_rating(id):
     try:
         body_data = request.get_json()
+        # Query rating entity and filter by id=id
         stmt = db.select(Rating).filter_by(id=id)
         rating = db.session.scalar(stmt)
         if rating:

@@ -35,6 +35,7 @@ def auth_register():
 @auth_bp.route('/login', methods=['POST'])
 def auth_login():
     body_data = request.get_json()
+    # Query User model and filter by email, specifically the email given in the body_data
     stmt = db.select(User).filter_by(email=body_data.get('email'))
     user = db.session.scalar(stmt)
 
