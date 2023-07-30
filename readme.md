@@ -254,6 +254,12 @@ The ability to create and delete are only added to test the API's functionality.
 
 # Describe your projects *models* in terms of relationships they have with each other (R8)
 
+Each entity will have a primary key. This enables us to establish relationships between two entities with the use of foreign keys.
+
+A relational database built upon this model enables referential integrity, data integrity and enforces constraints. 
+
+We are also able to retrieve information through these foreign keys and customise routes to handle different methods. 
+
 1. Users
     - Contains primary key 
 2. Comments
@@ -270,6 +276,8 @@ The ability to create and delete are only added to test the API's functionality.
         - difficulty_id
         - user_id
         - Identifies that a track belongs to a certain location, has a certain rating and difficulty and has been created by a particular user
+        - The numerous foreign keys in this entity establish lots of relationships with other tables. This allows us to search different parameters and populate which tracks have the associated information.
+        - As the tracks entity is probably the most useful for an end user, we want a user to be able to search for tracks through multiple methods, such as, difficulty, rating, location, mountain bike type etc. 
 4. Countries
     - Contains primary key 
 5. Regions
@@ -295,6 +303,7 @@ The ability to create and delete are only added to test the API's functionality.
         - track_id
         - Used to identify which mountain bike types are recommended for certain tracks
         - Gives the ability to look up mountain bike type and get a list of which tracks are recommended for that bike 
+
 
 # Discuss the database relations to be implemented in your application (R9)
 
