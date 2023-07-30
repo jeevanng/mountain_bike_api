@@ -8,6 +8,7 @@ from datetime import timedelta
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+# Register new user
 @auth_bp.route('/register', methods=['POST'])
 def auth_register():
     try: 
@@ -30,6 +31,7 @@ def auth_register():
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return { 'error': f'The {err.orig.diag.column_name} is required' }, 409
 
+# Login route for user
 @auth_bp.route('/login', methods=['POST'])
 def auth_login():
     body_data = request.get_json()

@@ -10,19 +10,23 @@ from models.region import Region
 
 locations_bp = Blueprint('locations', __name__,)
 
+# Get the tracks associated with the location 
 @locations_bp.route('/<location_name>')
 @jwt_required()
 def get_location(country_name, region_name, location_name):
+    # Check to see whether the country exists in the databse
     country_stmt = db.select(Country).filter_by(country_name=country_name)
     country = db.session.scalar(country_stmt)
     if not country:
         return {'error': f'Country {country_name} does not exist'}, 404
     
+    # Check to see whether the region is within the country stated
     region_stmt = db.select(Region).filter_by(region_name=region_name, country_id=country.id)
     region = db.session.scalar(region_stmt)
     if not region:
         return {'error': f'Region {region_name} does not exist in {country_name}'}, 404
     
+    # If location exists in the region, return schema. Otherwise show error message below
     location_stmt = db.select(Location).filter_by(region_id=region.id, location_name=location_name)
     location = db.session.scalar(location_stmt)
     if not location:
@@ -63,7 +67,9 @@ def create_location(country_name, region_name):
             return {'error': f"Location {locations.location_name}' is already in use"}, 409
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {'error': f'The {err.orig.diag.column_name} is required' }, 409
-        
+    
+# Same as above. Checks to see whether country exists. Whether the region exists in the country, and then whether the location exists 
+# in that region. If any of those are not true, return error messages. 
 @locations_bp.route('/<location_name>', methods=['DELETE'])
 @jwt_required()
 @authorise_as_admin

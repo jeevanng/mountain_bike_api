@@ -5,6 +5,7 @@ from models.mtb_type import MountainBike, mountain_bike_schema, mountain_bikes_s
 
 mtb_types_bp = Blueprint('mtb_type', __name__, url_prefix='/mtb')
 
+# Get all mountain bike types that exist in the database
 @mtb_types_bp.route('/')
 @jwt_required()
 def get_all_mtb_types():
@@ -12,6 +13,7 @@ def get_all_mtb_types():
     mtb_types = db.session.scalars(stmt)
     return mountain_bikes_schema_exclude.dump(mtb_types)
 
+# Get the mountain bike type by id, and show the associated tracks for that mountain bike type. Show recommendations which includes 'tracks' field.
 @mtb_types_bp.route('/<int:id>')
 @jwt_required()
 def get_track_by_mtb_type(id):

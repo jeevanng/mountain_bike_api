@@ -9,10 +9,12 @@ from controllers.track_controller import authorise_as_admin
 from sqlalchemy.exc import IntegrityError
 from psycopg2 import errorcodes
 
+# Blueprints and registers for the routes
 countries_bp = Blueprint('country', __name__, url_prefix='/country')
 countries_bp.register_blueprint(regions_bp, url_prefix='/<country_name>/region')
 countries_bp.register_blueprint(locations_bp, url_prefix='/<country_name>/region/<region_name>/location')
 
+# Get all countries in the databse
 @countries_bp.route('/')
 @jwt_required()
 def get_all_countries():
@@ -20,6 +22,7 @@ def get_all_countries():
     countries = db.session.scalars(stmt)
     return countries_schema_exclude.dump(countries)
 
+# Shows the regions belonging to the country_name 
 @countries_bp.route('/<country_name>')
 @jwt_required()
 def get_one_country(country_name):
@@ -29,7 +32,8 @@ def get_one_country(country_name):
         return country_schema.dump(country)
     else:
         return {'error': f'Country {country_name} does not exist'}, 404
-    
+
+# Create a new country
 @countries_bp.route('/', methods=['POST'])
 @jwt_required()
 @authorise_as_admin
@@ -51,7 +55,8 @@ def create_country():
             return {'error': f"Country {countries.country_name}' is already in use"}, 409
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {'error': f'The {err.orig.diag.column_name} is required' }, 409
-        
+    
+# Delete country
 @countries_bp.route('/<country_name>', methods=['DELETE'])
 @jwt_required()
 @authorise_as_admin

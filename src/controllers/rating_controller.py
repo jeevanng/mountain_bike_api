@@ -9,6 +9,7 @@ from psycopg2 import errorcodes
 
 ratings_bp = Blueprint('rating', __name__, url_prefix='/rating')
 
+# Get all ratings 
 @ratings_bp.route('/')
 @jwt_required()
 def get_all_ratings():
@@ -16,6 +17,7 @@ def get_all_ratings():
     ratings = db.session.scalars(stmt)
     return ratings_schema_exclude.dump(ratings)
 
+# Get rating and all the tracks associated to that rating
 @ratings_bp.route('/<int:id>')
 @jwt_required()
 def get_track_via_rating(id):
@@ -26,6 +28,7 @@ def get_track_via_rating(id):
     else:
         return {'error': f'Rating not found with id {id}'}, 404
     
+# Post new rating
 @ratings_bp.route('/', methods=['POST'])
 @jwt_required()
 @authorise_as_admin
@@ -49,6 +52,7 @@ def create_rating():
     except DataError as err:
         return {'error': 'Not a valid integer. Please enter a valid number'}
 
+# Edit/update rating
 @ratings_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 @authorise_as_admin
@@ -86,6 +90,8 @@ def delete_rating(id):
         else:
             return {'message': f'Rating not found with id {id}'}, 404
     except IntegrityError as err:
+        # If a user tries to delete a rating, where that rating is the foreign key of a track. It will become null, and violate the 
+        # not null violation. Thus provide the code error below.
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             db.session.rollback()
             return {'error': 'Unable to delete',

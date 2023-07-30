@@ -20,10 +20,12 @@ class Track(db.Model):
     location_id = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=False)
     
     user = db.relationship('User', back_populates='tracks')
+    # When a track is deleted, delete all the comments linked to that track
     comments = db.relationship('Comment', back_populates='track', cascade='all, delete')
     difficulty = db.relationship('Difficulty', back_populates='tracks')
     rating = db.relationship('Rating', back_populates='tracks')
     location = db.relationship('Location', back_populates='tracks')
+    # When a track is deleted, delete all recommendations linked to tha track 
     recommendations = db.relationship('Recommendation', back_populates='track', cascade='all, delete')
 
 class TrackSchema(ma.Schema):
@@ -44,6 +46,7 @@ class TrackSchema(ma.Schema):
     climb = fields.Integer(required=True)
     descent = fields.Integer(required=True)
     
+    # This will return the "m" for distance, climb and descent. Indicating it is metres
     @post_dump
     def format_distance_metres(self, data, **kwargs):
         data['distance'] = f"{data['distance']}m"
