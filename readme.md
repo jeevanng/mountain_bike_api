@@ -204,7 +204,7 @@ Some of the drawbacks are;
 - E.g. If country_name is Australia;
     - Only regions such as Victoria, Tasmania etc will be valid. Whatever exists in the database.
 
-*localhost:8080/country/<country_name>/region/<region_name>/location/W<location_name>* [DELETE]
+*localhost:8080/country/<country_name>/region/<region_name>/location/<location_name>* [DELETE]
 
 - Delete a location and it's associated tracks.
 - Must be linked to the correct region.

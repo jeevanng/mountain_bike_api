@@ -83,6 +83,7 @@ def update_rating(id):
 @authorise_as_admin
 def delete_rating(id):
     try:
+        # Query rating entity and filter by id=id
         stmt = db.select(Rating).filter_by(id=id)
         rating = db.session.scalar(stmt)
         if rating:
